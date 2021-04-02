@@ -10,12 +10,12 @@ jobs:
       - name: Check out Repo
         uses: actions/checkout@v2
         with:
-          username: williamslchan
-          password: NAhc7494
+          username: ${{secrets.DOCKER_USERNAME }}
+          password: ${{secrets.DOCKER_PASSWORD }}
 
       - name: Set up Docker Builds
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Build and push
         id: docker_build
