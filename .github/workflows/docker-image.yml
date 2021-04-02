@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: project7940/app:latest
+          tags: project7940/latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
