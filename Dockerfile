@@ -1,7 +1,8 @@
 FROM python
 WORKDIR /app
-COPY chatbot.py chatbot.py
-COPY requirements.txt requirements.txt
+COPY chatbot.py ./
+COPY requirements.txt ./
+COPY config.ini ./
 RUN pip install pip update
 RUN pip install -r requirements.txt
 ENV ACCESS_TOKEN =1671967756:AAHcCpbe8H3KFd_4cM3EVdwXABjkNgxnoy0
