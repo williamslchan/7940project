@@ -89,12 +89,13 @@ def calories(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /calories is issued."""
 
     try: 
+        global cnxn
         cursor = cnxn.cursor()
         cursor.execute("SELECT * FROM calories")
         out = cursor.fetchall()
         response = ""
         for row in out:
-            response += row
+            response += row[0]
             update.message.reply_text('Good day, !' + response)
     except (IndexError, ValueError):
         update.message.reply_text('Usage: /calories <keyword>')
