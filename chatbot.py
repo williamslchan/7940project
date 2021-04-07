@@ -80,7 +80,7 @@ def hello(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('Usage: /hello <keyword>')
 
 def calories(update: Update, context: CallbackContext) -> None:
-    """Send a message when the command /hello is issued."""
+    """Send a message when the command /calories is issued."""
     sql_config = {
         'user': 'root',
         'password': 'MIyKIK7rNzwNGtw5',
@@ -93,9 +93,9 @@ def calories(update: Update, context: CallbackContext) -> None:
         cursor.execute("SELECT * FROM calories")
         out = cursor.fetchall()
         for row in out:
-            update.message.reply_text('Good day, ' + row + '!')
+            update.message.reply_text('Good day, !')
     except (IndexError, ValueError):
-        update.message.reply_text('Usage: /hello <keyword>')
+        update.message.reply_text('Usage: /calories <keyword>')
 
 
 
