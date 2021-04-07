@@ -6,16 +6,7 @@ import logging
 import redis
 import mysql.connector
 
-sql_config = {
-    'user': 'root',
-    'password': 'MIyKIK7rNzwNGtw5',
-    'host': '104.198.233.95',
-}
 
-# now we establish our connection
-sql_config['database'] = 'comp7940'  # add new database to config dict
-cnxn = mysql.connector.connect(**sql_config)
-cursor = cnxn.cursor()
 
 global redis1
 
@@ -90,7 +81,15 @@ def hello(update: Update, context: CallbackContext) -> None:
 
 def calories(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /hello is issued."""
+    sql_config = {
+    'user': 'root',
+    'password': 'MIyKIK7rNzwNGtw5',
+    'host': '104.198.233.95',
+    }
     try: 
+        sql_config['database'] = 'comp7940'  # add new database to config dict
+        cnxn = mysql.connector.connect(**sql_config)
+        cursor = cnxn.cursor()
         cursor.execute("SELECT * FROM calories")
         out = cursor.fetchall()
         for row in out:
