@@ -4,6 +4,18 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 import configparser
 import logging
 import redis
+import mysql.connector
+
+sql_config = {
+    'user': 'root',
+    'password': 'MIyKIK7rNzwNGtw5',
+    'host': '104.198.233.95',
+}
+
+# now we establish our connection
+sql_config['database'] = 'comp7940'  # add new database to config dict
+cnxn = mysql.connector.connect(**sql_config)
+cursor = cnxn.cursor()
 
 global redis1
 
@@ -30,6 +42,7 @@ def main():
     dispatcher.add_handler(CommandHandler("add", add))
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CommandHandler("hello", hello))
+    dispatcher.add_handler(CommandHandler("calories", calories))
 
 
 
@@ -75,7 +88,15 @@ def hello(update: Update, context: CallbackContext) -> None:
     except (IndexError, ValueError):
         update.message.reply_text('Usage: /hello <keyword>')
 
-
+def calories(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /hello is issued."""
+    try: 
+        cursor.execute("SELECT * FROM calories")
+        out = cursor.fetchall()
+        for row in out:
+            update.message.reply_text('Good day, ' + row + '!')
+    except (IndexError, ValueError):
+        update.message.reply_text('Usage: /hello <keyword>')
 
 
 
