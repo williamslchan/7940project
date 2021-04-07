@@ -82,12 +82,12 @@ def hello(update: Update, context: CallbackContext) -> None:
 def calories(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /hello is issued."""
     sql_config = {
-    'user': 'root',
-    'password': 'MIyKIK7rNzwNGtw5',
-    'host': '104.198.233.95',
+        'user': 'root',
+        'password': 'MIyKIK7rNzwNGtw5',
+        'host': '104.198.233.95',
+        'database': 'comp7940'
     }
     try: 
-        sql_config['database'] = 'comp7940'  # add new database to config dict
         cnxn = mysql.connector.connect(**sql_config)
         cursor = cnxn.cursor()
         cursor.execute("SELECT * FROM calories")
