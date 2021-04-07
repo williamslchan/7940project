@@ -12,7 +12,6 @@ sql_config = {
     'host': '104.198.233.95',
     'database': 'comp7940'
 }
-cnxn = mysql.connector.connect(**sql_config)
 
 global redis1
 
@@ -87,16 +86,14 @@ def hello(update: Update, context: CallbackContext) -> None:
 
 def calories(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /calories is issued."""
-
-    try: 
-        global cnxn
-        cursor = cnxn.cursor()
-        cursor.execute("SELECT * FROM calories")
-        out = cursor.fetchall()
-        response = ""
-        for row in out:
-            response += row[0]
-            update.message.reply_text('Good day, !' + response)
+    cnxn = mysql.connector.connect(**sql_config)
+    cursor = cnxn.cursor()
+    cursor.execute("SELECT * FROM calories")
+    out = cursor.fetchall()
+    response = ""
+    for row in out:
+        response += row[0]
+    update.message.reply_text('Good day, !' + response)
     except (IndexError, ValueError):
         update.message.reply_text('Usage: /calories <keyword>')
 
