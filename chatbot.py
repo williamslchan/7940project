@@ -6,13 +6,8 @@ import logging
 import redis
 import mysql.connector
 
-sql_config = {
-    'user': 'root',
-    'password': 'MIyKIK7rNzwNGtw5',
-    'host': '104.198.233.95',
-    'database': 'comp7940'
-}
 
+global sql_config
 global redis1
 
 def main():
@@ -25,7 +20,14 @@ def main():
 
     global redis1
     redis1 = redis.Redis(host=(config['REDIS']['HOST']), password=(config['REDIS']['PASSWORD']), port=(config['REDIS']['REDISPORT']))
-
+    
+    global sql_config
+    sql_config = {
+        'user': config['GOOGLE_CLOUD_SQL']['USER'],
+        'password': config['GOOGLE_CLOUD_SQL']['PASSWORD'],
+        'host': config['GOOGLE_CLOUD_SQL']['HOST'],
+        'database': config['GOOGLE_CLOUD_SQL']['DATABASE']
+    }
     # You can set this logging module, so you will know when and why things do not work as expected
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         level=logging.INFO)
@@ -58,7 +60,7 @@ def echo(update, context):
 # context. Error handlers also receive the raised TelegramError object in error.
 def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Helping you helping you.')
+    update.message.reply_text('Usage: /calories <food> <amount (g)>, \n eg /calories bread 50, /calories egg 75 \n Usage: /track <weight (kg)>, \n eg /track 55.8')
 
 
 def add(update: Update, context: CallbackContext) -> None:
@@ -86,16 +88,18 @@ def hello(update: Update, context: CallbackContext) -> None:
 
 def calories(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /calories is issued."""
-    cnxn = mysql.connector.connect(**sql_config)
-    cursor = cnxn.cursor()
-    cursor.execute("SELECT * FROM calories")
-    out = cursor.fetchall()
-    response = ""
-    for row in out:
-        response += row[0]
-    update.message.reply_text('Good day, !' + response)
+    try:
+        foodName = str(context.args[0]) 
+        grams = context.args[1] 
+        cnxn = mysql.connector.connect(**sql_config)
+        cursor = cnxn.cursor()
+        select_stmt = "SELECT * FROM calories WHERE food LIKE %(foodName)s LIMIT 1"
+        cursor.execute(select_stmt, {'foodName': foodName})
+        out = cursor.fetchall()
+        result_calories = out[0][1] * int(grams) / 100
+        update.message.reply_text('Calories for '+ grams + '(g) ' + foodName + ' is about ' + str(result_calories) + ' kcal.' )
     except (IndexError, ValueError):
-        update.message.reply_text('Usage: /calories <keyword>')
+        update.message.reply_text('Sorry we do not have this food item in database \n Usage: /calories <food> <amount in grams>')
 
 
 
