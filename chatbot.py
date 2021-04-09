@@ -5,6 +5,7 @@ import configparser
 import logging
 import redis
 import mysql.connector
+import datetime
 
 
 global sql_config
@@ -41,6 +42,7 @@ def main():
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CommandHandler("hello", hello))
     dispatcher.add_handler(CommandHandler("calories", calories))
+    dispatcher.add_handler(CommandHandler("track", track))
 
 
 
@@ -101,6 +103,24 @@ def calories(update: Update, context: CallbackContext) -> None:
     except (IndexError, ValueError):
         update.message.reply_text('Sorry we do not have this food item in database \n Usage: /calories <food> <amount in grams>')
 
+def track(update: Update, context: CallbackContext) -> None:
+    try:
+        now = datetime.datetime.now().strftime('%x')
+        user = update.message.from_user
+        weight = context.args[0]
+        cnxn = mysql.connector.connect(**sql_config)
+        cursor = cnxn.cursor()
+        insert_stmt = "INSERT INTO Weights (userId, weight, dateTime) VALUES (%(userId)s, %(weight)s, %(dateTime)s)"
+        cursor.execute(insert_stmt, {'userId': user['id'], 'weight': weight, 'dateTime': now})
+        cnxn.commit()
+        select_stmt = "SELECT dateTime, weight FROM Weights WHERE userId = %(userId)s"
+        cursor.execute(select_stmt, {'userId': user['id']})
+        out = cursor.fetchall()
+        update.message.reply_text('Hi '+ str(user['username']+ ', here is your body weight records:'))
+        for row in out:
+            update.message.reply_text('Date: ' + row[0] + ' Weight: ' + str(row[1])+'kg')
+    except (IndexError, ValueError):
+        update.message.reply_text('Usage: /track <body weight(kg)>')
 
 
 if __name__ == '__main__':
