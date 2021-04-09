@@ -116,7 +116,7 @@ def track(update: Update, context: CallbackContext) -> None:
         select_stmt = "SELECT dateTime, weight FROM Weights WHERE userId = %(userId)s"
         cursor.execute(select_stmt, {'userId': user['id']})
         out = cursor.fetchall()
-        update.message.reply_text('Hi '+ str(user['username']+ ', here is your body weight records:'))
+        update.message.reply_text('Hi '+ str(user['username']) + ', here is your body weight records:'))
         for row in out:
             update.message.reply_text('Date: ' + row[0] + ' Weight: ' + str(row[1])+'kg')
     except (IndexError, ValueError):
